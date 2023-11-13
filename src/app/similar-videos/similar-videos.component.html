@@ -1,0 +1,38 @@
+<!-- <div class="md:container md:mx-auto my-5 mb-5 pb-5">
+  <div class="grid grid-cols-4 gap-3 ">
+    <div *ngFor="let item of similarVideos; let x=index" class="cursor-pointer" [routerLink]="['/video', item.id]" >
+      <div class="video-container" style="position: relative; ">
+        <img [src]="item.thumbnail" class="rounded-lg relative">
+        <p class="absolute" style="top:50%;bottom:0;left:50%;right:0;color: white;"><mat-icon mat-list-icon>play_arrow</mat-icon></p>
+      </div>
+      {{item.title}}
+    </div>
+  </div>
+</div> -->
+<div class="bg-slate-50">
+<div class="">
+  <p class="text-center mt-10  text-2xl p-2 border-t-2 ">You may also like</p>
+</div>
+<div class="my-10 xs:mx-3 pb-5 " >
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mb-2 "  *ngFor="let item of similarVideos; let x=index">
+    <div class="flex flex-col md:flex-row lg:flex-row">
+      <div class="md:shrink-0" [routerLink]="['/video', item.id]">
+        <img class="h-48 w-full object-cover md:w-48 md:h-44 rounded-s-xl" [src]="item.thumbnail" alt="Modern building architecture">
+      </div>
+      <div class="p-10 rounded-r-xl bg-white">
+        <!-- <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{item.title}}</div> -->
+        <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate" [routerLink]="['/video', item.id]"  >{{item.title}}</p>
+        <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>
+
+        <!-- <p class="mt-2 text-slate-500">Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of places to do just that.</p> -->
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="flex w-4">
+  <div>ffdf</div>
+  <div>dfdfdf</div>
+</div>

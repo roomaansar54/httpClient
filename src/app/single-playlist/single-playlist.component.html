@@ -1,0 +1,66 @@
+<div class="container mx-auto">
+  <div class="aspect-w-10 aspect-h-4 mx-auto my-5  rounded-lg" id="video-container" style="width: 80%;">
+
+    <vg-player (onPlayerReady)="onPlayerReady($event)" id="vg-player" class="rounded-lg"
+      style="width: 100% !important; height: 100% !important;">
+      <vg-overlay-play></vg-overlay-play>
+      <vg-buffering></vg-buffering>
+      <vg-scrub-bar>
+        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+      </vg-scrub-bar>
+      <vg-controls>
+        <vg-play-pause></vg-play-pause>
+        <vg-playback-button></vg-playback-button>
+        <vg-time-display vgProperty="current" vgFormat="mm:ss"> / </vg-time-display>
+        <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+        <!-- <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display> -->
+        <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
+
+        <vg-track-selector></vg-track-selector>
+        <vg-mute></vg-mute>
+        <vg-volume></vg-volume>
+        <vg-fullscreen></vg-fullscreen>
+        <vg-track-selector></vg-track-selector>
+
+      </vg-controls>
+      <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin
+        (loadedmetadata)="updateVideoDimensions()">
+        <!-- <source [src]="currentVideo.url" type="video/mp4"> -->
+        <!-- <source src="assets/video2.mp4" type="video/mp4"> -->
+        <source [src]="currentVideo.url" type="video/mp4">
+
+      </video>
+    </vg-player>
+  </div>
+</div>
+
+  <div class="bg-slate-50">
+    <div class="">
+      <p class="text-center mt-10  text-2xl p-2 border-t-2 ">Next in playlist</p>
+    </div>
+    <div class="my-10 xs:mx-3 pb-5 ">
+      <div class="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mb-2 "
+        *ngFor="let item of playlist.videos; let x=index">
+        <div class="flex flex-col md:flex-row lg:flex-row">
+          <div class="md:shrink-0" [routerLink]="['/video', item.id]">
+            <img class="h-48 w-full object-cover md:w-48 md:h-44 rounded-s-xl" [src]="item.thumbnail"
+              alt="Modern building architecture">
+          </div>
+          <div class="p-10 rounded-r-xl bg-white">
+            <p *ngIf="currentVideo === item" class="text-2xl text-rose-500" >Now Playing...</p>
+
+
+            <!-- <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{item.title}}</div> -->
+            <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate"
+              [routerLink]="['/video', item.id]">{{item.title}}</p>
+            <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>
+
+            <!-- <p class="mt-2 text-slate-500">Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of places to do just that.</p> -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>

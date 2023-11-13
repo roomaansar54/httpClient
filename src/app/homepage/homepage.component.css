@@ -1,0 +1,33 @@
+/* Default layout for larger screens */
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Adjust the layout for smaller screens using a media query */
+@media screen and (max-width: 768px) {
+  .flex-container {
+    justify-content: space-around;
+  }
+}
+
+/* Adjust the layout for even smaller screens */
+@media screen and (max-width: 480px) {
+  .flex-container {
+    justify-content: center;
+  }
+}
+
+.flex-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.card {
+  flex: 0 0 calc(33.3333% - 10px); /* Adjust the width as needed */
+  margin: 5px;
+  /* Other card styles */
+}

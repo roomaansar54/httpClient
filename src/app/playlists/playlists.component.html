@@ -1,0 +1,63 @@
+<!-- <div *ngFor="let item of extractedPlaylists">
+  <div *ngIf="item.videos.length != 0" (click)="playPlaylist(item.id)">
+    {{item.name}}
+    <div class="inline-block position-relative">
+      <img [src]="item.videos[0].thumbnail" class="block w-full h-auto" />
+      <div class="position-absolute " style="top:50%; left: 0;">{{item.videos.length }}</div>
+
+    </div>
+
+  </div>
+</div> -->
+<div *ngIf="extractedPlaylists.length == 0" class="text-center mt-5 text-2xl">No Item in any Playlist found! Please visit the <i routerLink="" class="cursor-pointer">homepage</i> to add videos to playlists.</div>
+
+
+<div class="md:container md:mx-auto my-5 mb-5 p-5 m-5 " >
+  <div class="grid lg:grid-cols-2 gap-y-8 gap-x-4 sm:grid-cols-2 grid-cols-1 2xl:grid-cols-4">
+    <div *ngFor="let item of extractedPlaylists" class="cursor-pointer rounded-lg" style="height: max-content;" style="background-color: #107516;padding:20px ">
+      <div   routerLinkActive="router-link-active" >
+        <!-- <div class="relative" [routerLink]="['/video', item.id]"> -->
+          <img [src]="item.videos[0].thumbnail" class="rounded-lg relative w-full h-52">
+          <div class="mb-1 truncate text-2xl text-white">{{item.name}}</div>
+
+          <!-- class="absolute grid" style="background-color:#00000082;height:100%;bottom:0;left:50%;right:0;color: white;" -->
+              <div class="mb-5" ><p class="text-white">{{item.videos.length }} videos</p></div>
+
+        <!-- </div> -->
+
+          <div class="relative  text-left">
+            <div>
+              <button type="button"
+                class=" w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                id="menu-button"  [routerLink]="['/playlist', item.id]">
+                Play all
+              </button>
+            </div>
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- <vg-player #vgPlayer (onPlayerReady)="onPlayerReady($event)">
+  <vg-overlay-play></vg-overlay-play>
+  <vg-buffering></vg-buffering>
+  <vg-controls>
+    <vg-play-pause></vg-play-pause>
+    <vg-scrub-bar>
+      <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+      <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+    </vg-scrub-bar>
+    <vg-playback-button></vg-playback-button>
+    <vg-volume>
+      <vg-mute></vg-mute>
+    </vg-volume>
+    <vg-fullscreen></vg-fullscreen>
+  </vg-controls>
+  <video [vgMedia]="$any(media)" #media  id="singleVideo" preload="auto" playsinline autoplay>
+    <source  [src]="url" >
+
+  </video>
+</vg-player> -->

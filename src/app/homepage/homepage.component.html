@@ -1,0 +1,194 @@
+<div *ngIf="displayVideos.length == 0" class="text-center mt-5 text-2xl">No favorites found! Please visit the <i routerLink="" class="cursor-pointer">homepage</i> to add videos to favorites.</div>
+
+<div class="md:container md:mx-auto my-5 mb-5 pb-5 m-5">
+  <div class="grid lg:grid-cols-3 gap-y-8 gap-x-4 sm:grid-cols-2 grid-cols-1 2xl:grid-cols-4" >
+    <div *ngFor="let item of displayVideos" class="cursor-pointer" style="height: max-content;" >
+      <div>
+      <div class="relative" [routerLink]="['/video', item.id]" >
+        <img [src]="item.thumbnail" class="rounded-lg relative w-full h-52" >
+        <p class="absolute" style="top:50%;bottom:0;left:50%;right:0;color: white;"><mat-icon
+            mat-list-icon>play_arrow</mat-icon></p>
+      </div>
+      <div [routerLink]="['/video', item.id]" class="mb-1 truncate" >{{item.title}}</div>
+      <!-- style="  white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%; /* Adjust this value as needed */
+    " -->
+        <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+  <!-- <div class="flex w-auto">
+    <div class="flex flex-col">
+      <div class="card">
+        <div class="card-header">Card 1</div>
+        <div class="card-content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Card 2</div>
+        <div class="card-content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+
+        </div>
+        <div class="card-footer">
+          <button class="btn">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Card 3</div>
+        <div class="card-content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+
+        </div>
+        <div class="card-footer">
+          <button class="btn">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="flex flex-col">
+      <div class="card">
+        <div class="card-header">Card 1</div>
+        <div class="card-content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Card 2</div>
+        <div class="card-content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Card 3</div>
+        <div class="card-content">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ac sem eget orci facilisis ullamcorper. Donec vel mauris eget augue tincidunt tincidunt. Donec euismod magna sit amet enim semper, eget mollis lectus sollicitudin. Nullam at justo vitae nisi luctus faucibus. Donec et velit et purus aliquet luctus.</p>
+
+        </div>
+        <div class="card-footer">
+          <button class="btn">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+
+    </div>
+ -->
+  <!-- </div> -->
+
+
+
+  <!-- <div class="flex w-auto">
+    <ng-container *ngFor="let item of displayVideos; let i = index">
+      <div class="flex flex-col">
+        <div class="card">
+          <div class="card-header">{{ item.title }}</div>
+          <div class="card-content">
+            <p>{{ item.description }}</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn" [routerLink]="['/video', item.id]">View</button>
+            <button class="btn" >Download</button>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="(i + 1) % 3 === 0">
+        <div class="w-full"></div>
+      </ng-container>
+    </ng-container>
+  </div>
+ -->
+  <!-- <div class="flex w-auto">
+    <ng-container *ngFor="let row of preprocessVideos(displayVideos)">
+      <div class="flex flex-col">
+        <ng-container *ngFor="let item of row">
+          <div class="card" *ngIf="item">
+            <div class="card-header">{{ item.title }}</div>
+            <div class="card-content">
+              <p>{{ item.description }}</p>
+            </div>
+            <div class="card-footer">
+              <button class="btn" [routerLink]="['/video', item.id]">View</button>
+              <button class="btn" >Download</button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div> -->
+
+
+  <!-- <div class="card-container">
+    <ng-container *ngFor="let item of displayVideos">
+      <div class="card">
+        <div class="card-header">{{ item.title }}</div>
+        <div class="card-content">
+          <p>{{ item.description }}</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn" [routerLink]="['/video', item.id]">View</button>
+          <button class="btn" >Download</button>
+        </div>
+      </div>
+    </ng-container>
+  </div> -->
+  <!-- <div [ngClass]="flexContainerClass" class="flex">
+    <div *ngFor="let row of preprocessVideos(displayVideos)" class=" flex flex-col">
+      <div *ngFor="let item of row" class="card">
+        <div class="card-header">{{ item.title }}</div>
+        <div class="card-content">
+        </div>
+        <div class="card-footer">
+          <button class="btn" [routerLink]="['/video', item.id]">View</button>
+          <button class="btn">Download</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+
+  <!-- <div  style="display:flex; flex: 0 0 calc(33.3333% - 10px); ">
+    <ng-container *ngFor="let row of preprocessVideos(displayVideos)">
+      <div class="flex flex-col" [ngStyle]="{ 'width.px': columnWidth }">
+        <ng-container *ngFor="let item of row" >
+          <div  *ngIf="item">
+            <div class="card-header">{{ item.title }}</div>
+            <div class="card-content">
+              <p>{{ item.description }}</p>
+            </div>
+            <div class="card-footer">
+              <button class="btn" [routerLink]="['/video', item.id]">View</button>
+              <button class="btn" >Download</button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+
+  </div> -->

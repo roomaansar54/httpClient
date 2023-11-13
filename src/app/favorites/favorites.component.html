@@ -1,0 +1,17 @@
+<div *ngIf="favVideos.length == 0" class="text-center mt-5 text-2xl">No favorites found! Please visit the <i routerLink="" class="cursor-pointer">homepage</i> to add videos to favorites.</div>
+<div class="md:container md:mx-auto my-5 mb-5 pb-5 m-5">
+  <div class="grid lg:grid-cols-3 gap-y-8 gap-x-4 sm:grid-cols-2  grid-cols-1 2xl:grid-cols-4" >
+    <div *ngFor="let item of favVideos" class="cursor-pointer" >
+      <div class="relative" [routerLink]="['/video', item.id]" >
+        <img [src]="item.thumbnail" class="rounded-lg relative w-full h-52" >
+        <p class="absolute" style="top:50%;bottom:0;left:50%;right:0;color: white;"><mat-icon
+            mat-list-icon>play_arrow</mat-icon></p>
+      </div>
+      <div [routerLink]="['/video', item.id]" class="mb-1" style="  white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%; /* Adjust this value as needed */
+    ">{{item.title}}</div>
+        <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>
+    </div>
+  </div>
