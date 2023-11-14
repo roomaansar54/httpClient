@@ -1,6 +1,6 @@
 <div class="container mx-auto">
   <div class="aspect-w-10 aspect-h-4 mx-auto my-5  rounded-lg" id="video-container" style="width: 80%;">
-    <vg-player id="vg-player" class="rounded-lg" style="width: 100% !important; height: 100% !important;">
+    <vg-player id="vg-player" class="rounded-lg" style="width: 100% !important; height: 100% !important;" (onPlayerReady)="onPlayerReady($event)">
       <vg-overlay-play></vg-overlay-play>
       <vg-buffering></vg-buffering>
       <vg-scrub-bar>
@@ -23,7 +23,7 @@
         <vg-track-selector></vg-track-selector>
 
       </vg-controls>
-      <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin (loadedmetadata)="updateVideoDimensions()">
+      <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin (loadedmetadata)="videoService.updateVideoDimensions(singleVideo)">
         <!-- <source [src]="currentVideo.url" type="video/mp4"> -->
         <!-- <source src="assets/video2.mp4" type="video/mp4"> -->
         <source [src]="(videoService.currentVideo$ | async).url" type="video/mp4">
@@ -59,6 +59,8 @@
           <img class="h-48 w-full object-cover md:w-48 md:h-44 rounded-s-xl" [src]="item.thumbnail" alt="Modern building architecture">
         </div>
         <div class="p-10 rounded-r-xl bg-white">
+          <div *ngIf="displayPlaylist == true"><p *ngIf="currentVideo === item" class="text-2xl text-rose-500" >Now Playing...</p></div>
+
           <!-- <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{item.title}}</div> -->
           <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate" [routerLink]="['/video', item.id]"  >{{item.title}}</p>
           <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>

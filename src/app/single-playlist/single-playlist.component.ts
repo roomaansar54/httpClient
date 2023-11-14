@@ -74,7 +74,12 @@ export class SinglePlaylistComponent implements OnInit {
       // this.mediaApi.src = currentVideo.url;
       // this.api.load(); // Load the new source
       this.api.play();
-      this.updateVideoSource(this.currentVideo)
+      // this.updateVideoSource(this.currentVideo)
+      if (this.singleVideo && this.singleVideo.nativeElement) {
+        this.singleVideo.nativeElement.src = this.currentVideo.url;
+        this.singleVideo.nativeElement.load(); // Load the new video source
+      }
+
 
       // Listen to the ended event to play the next video
       this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {

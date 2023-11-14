@@ -1,7 +1,7 @@
 <div class="container mx-auto">
   <div class="aspect-w-10 aspect-h-4 mx-auto my-5  rounded-lg" id="video-container" style="width: 80%;">
 
-    <vg-player (onPlayerReady)="onPlayerReady($event)" id="vg-player" class="rounded-lg"
+    <vg-player #media (onPlayerReady)="onPlayerReady($event)" id="vg-player" class="rounded-lg"
       style="width: 100% !important; height: 100% !important;">
       <vg-overlay-play></vg-overlay-play>
       <vg-buffering></vg-buffering>
@@ -26,7 +26,7 @@
 
       </vg-controls>
       <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin
-        (loadedmetadata)="updateVideoDimensions()">
+      (loadedmetadata)="videoService.updateVideoDimensions(singleVideo)">
         <!-- <source [src]="currentVideo.url" type="video/mp4"> -->
         <!-- <source src="assets/video2.mp4" type="video/mp4"> -->
         <source [src]="currentVideo.url" type="video/mp4">

@@ -10,8 +10,8 @@ import { SinglePlaylistComponent } from './single-playlist/single-playlist.compo
 
 const routes: Routes = [
   { path: 'video/:id', component: SingleVideoComponent, data:{displayPlaylist: false} },
-  { path: 'playlists', component: PlaylistsComponent, data:{displayPlaylist: false} },
-  { path: 'playlist/:id', component: SinglePlaylistComponent },
+  { path: 'playlists', component: PlaylistsComponent,  },
+  { path: 'playlist/:id', component: SingleVideoComponent, data:{displayPlaylist: true} },
 
 
   { path: 'favorites', component: HomepageComponent, data:{displayFavorites: true} },

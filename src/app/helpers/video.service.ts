@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -73,6 +73,23 @@ export class VideoService {
   //     this.updatePlaylists(playlists);
   //   }
   // }
+  // Add a method to update the video dimensions and class
+  updateVideoDimensions(singleVideo:ElementRef) {
+    if (singleVideo && singleVideo.nativeElement) {
+      const videoElement =singleVideo.nativeElement;
+      // videoElement.addEventListener('loadedmetadata', () => {
+        // this.videoWidth = videoElement.videoWidth;
+        // this.videoHeight = videoElement.videoHeight;
+
+        // videos like video2 needs to be displayed fully, that;'s why object-contain property is important
+        if (videoElement.videoHeight > videoElement.videoWidth) {
+          videoElement.classList.add('object-contain');
+        } else {
+          videoElement.classList.add('object-fill');
+        }
+      // });
+    }
+  }
 
 
 

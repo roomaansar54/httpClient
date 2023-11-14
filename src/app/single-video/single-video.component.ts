@@ -20,7 +20,7 @@ export class SingleVideoComponent implements OnInit {
   currentVideo: any;
   videoWidth = 0;
   videoHeight = 0;
-  id: string = '0';
+  id!: any ;
   displayPlaylist = false;
 
   private subscription: Subscription | null = null;
@@ -35,10 +35,12 @@ export class SingleVideoComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router,
     public videoService:VideoService,
     ) {}
+
   ngOnInit() {
 
-    this.displayPlaylist = this.route.snapshot.data['displayFavorites'];
-    // if (this.displayPlaylist == false){
+    this.displayPlaylist = this.route.snapshot.data['displayPlaylist'];
+    console.log(this.displayPlaylist)
+    if (this.displayPlaylist == false){
       this.videoService.currentVideo$.subscribe((currentvideo) => {
         if (currentvideo) {
           // this.currentVideo = video;
@@ -92,13 +94,28 @@ export class SingleVideoComponent implements OnInit {
       .subscribe((video) => {
         if (video) {
           console.log(video);
-          this.updateVideoSource(video);
+          if (this.singleVideo && this.singleVideo.nativeElement) {
+            this.singleVideo.nativeElement.src = video.url;
+            this.singleVideo.nativeElement.load(); // Load the new video source
+          }
+
+          // this.updateVideoSource(video);
         }
       });
 
 
-    // }
-    // else{
+    }
+    else{
+      this.id = this.route.snapshot.paramMap.get('id');
+
+      this.videoService.playlists$.subscribe((data: any) => {
+        this.playlist = data[parseInt(this.id) - 1];
+        this.similarVideos = this.playlist.videos
+        this.currentVideo = this.playlist.videos[this.currentVideoIndex]
+        this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+
+      });
+
     //   this.videoService.playlists$.subscribe((data: any) => {
     //     this.playlist = data[parseInt(this.id) - 1];
     //     this.currentVideo = this.playlist.videos[this.currentVideoIndex]
@@ -106,7 +123,7 @@ export class SingleVideoComponent implements OnInit {
 
     //   });
 
-    // }
+    }
 
 
         // Subscribe to the currentVideo$ observable and update the currentVideo property
@@ -144,13 +161,94 @@ export class SingleVideoComponent implements OnInit {
     // Call the function to find similar videos based on tags.
   }
 
-  onPlayerReady(api: VgApiService) {
+  // onPlayerReady(api: VgApiService) {
 
-    this.api = api;
-    this.playVideo();
+  //   this.api = api;
+  //   this.playVideo();
+  //   // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+
+  // }
+  // playVideo() {
+  //   // const currentPlaylist = this.playlists[this.currentPlaylistIndex];
+  //   this.currentVideo = this.playlist.videos[this.currentVideoIndex];
+  //   console.log("curren",this.currentVideo)
+  //   // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+  //   console.log(this.currentVideoIndex)
+
+  //   console.log(this.currentVideo)
+
+  //   if (this.currentVideo) {
+  //     // this.mediaApi.src = currentVideo.url;
+  //     // this.api.load(); // Load the new source
+  //     this.api.play();
+  //     this.updateVideoSource(this.currentVideo)
+
+  //     // Listen to the ended event to play the next video
+  //     this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {
+  //       console.log('ended');
+  //       this.playNext();
+  //     });
+  //   }
+  // }
+  // playNext() {
+  //   this.currentVideoIndex++;
+  //   // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+  //   console.log(this.currentVideoIndex);
+  //   // this.videoService.currentVideo$.subscribe((data:any)=>{
+  //   //   console.log(data)
+  //   // })
+
+  //   if (
+  //     this.currentVideoIndex >=
+  //     this.playlists[parseInt(this.id) - 1].videos.length
+  //   ) {
+  //     this.currentVideoIndex = 0;
+  //     // this.currentPlaylistIndex = ((parseInt(this.id)-1) + 1) % this.playlists.length;
+  //   }
+
+  //   this.playVideo();
+  // }
+
+  private updateVideoSource(video: any) {
+    if (this.singleVideo && this.singleVideo.nativeElement) {
+      this.singleVideo.nativeElement.src = video.url;
+      this.singleVideo.nativeElement.load(); // Load the new video source
+    }
+  }
+
+  // Add a method to update the video dimensions and class
+  updateVideoDimensions() {
+    if (this.singleVideo && this.singleVideo.nativeElement) {
+      const videoElement = this.singleVideo.nativeElement;
+      // videoElement.addEventListener('loadedmetadata', () => {
+        this.videoWidth = videoElement.videoWidth;
+        this.videoHeight = videoElement.videoHeight;
+
+        // videos like video2 needs to be displayed fully, that;'s why object-contain property is important
+        if (this.videoHeight > this.videoWidth) {
+          videoElement.classList.add('object-contain');
+        } else {
+          videoElement.classList.add('object-fill');
+        }
+      // });
+    }
+  }
+  onPlayerReady(api: VgApiService) {
+    if (this.displayPlaylist == true){
+      this.api = api;
+      this.playVideo();
+
+    }
+    else{
+      this.api=api;
+      this.currentVideo = this.videos[parseInt(this.id)-1];
+      this.api.play();
+    }
+
     // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
 
   }
+
   playVideo() {
     // const currentPlaylist = this.playlists[this.currentPlaylistIndex];
     this.currentVideo = this.playlist.videos[this.currentVideoIndex];
@@ -164,7 +262,12 @@ export class SingleVideoComponent implements OnInit {
       // this.mediaApi.src = currentVideo.url;
       // this.api.load(); // Load the new source
       this.api.play();
-      this.updateVideoSource(this.currentVideo)
+      // this.updateVideoSource(this.currentVideo)
+      if (this.singleVideo && this.singleVideo.nativeElement) {
+        this.singleVideo.nativeElement.src = this.currentVideo.url;
+        this.singleVideo.nativeElement.load(); // Load the new video source
+      }
+
 
       // Listen to the ended event to play the next video
       this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {
@@ -192,29 +295,5 @@ export class SingleVideoComponent implements OnInit {
     this.playVideo();
   }
 
-  private updateVideoSource(video: any) {
-    if (this.singleVideo && this.singleVideo.nativeElement) {
-      this.singleVideo.nativeElement.src = video.url;
-      this.singleVideo.nativeElement.load(); // Load the new video source
-    }
-  }
-
-  // Add a method to update the video dimensions and class
-  updateVideoDimensions() {
-    if (this.singleVideo && this.singleVideo.nativeElement) {
-      const videoElement = this.singleVideo.nativeElement;
-      // videoElement.addEventListener('loadedmetadata', () => {
-        this.videoWidth = videoElement.videoWidth;
-        this.videoHeight = videoElement.videoHeight;
-
-        // videos like video2 needs to be displayed fully, that;'s why object-contain property is important
-        if (this.videoHeight > this.videoWidth) {
-          videoElement.classList.add('object-contain');
-        } else {
-          videoElement.classList.add('object-fill');
-        }
-      // });
-    }
-  }
 
 }
