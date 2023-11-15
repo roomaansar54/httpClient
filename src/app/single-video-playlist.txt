@@ -1,0 +1,464 @@
+import { playlists } from '../helpers/videos';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, ParamMap, Router } from '@angular/router';
+import { Subscription, filter, fromEvent, switchMap, of } from 'rxjs';
+import { videos } from '../helpers/videos';
+import { VideoService } from '../helpers/video.service';
+import { VgApiService } from '@videogular/ngx-videogular/core';
+
+@Component({
+  selector: 'app-single-video-playlist',
+  templateUrl: './single-video-playlist.component.html',
+  styleUrls: ['./single-video-playlist.component.css'],
+})
+export class SingleVideoPlaylistComponent implements OnInit {
+  readonly videos = videos;
+  readonly playlists = playlists;
+  similarVideos: any = [];
+  currentVideo: any;
+  videoWidth = 0;
+  videoHeight = 0;
+  id!: any ;
+  displayPlaylist = false;
+
+  private subscription: Subscription | null = null;
+
+  @ViewChild('media') singleVideo!: ElementRef;
+  playlist: any;
+  currentVideoIndex: any =0;
+  api!: VgApiService;
+  // @ViewChild('vg-player') vgPlayer!: ElementRef;
+
+
+  constructor(private route: ActivatedRoute, private router: Router,
+    public videoService:VideoService,
+    ) {}
+
+  ngOnInit() {
+
+    this.displayPlaylist = this.route.snapshot.data['displayPlaylist'];
+    console.log(this.displayPlaylist)
+    // this.currentVideo =
+    if (this.displayPlaylist == false){
+      this.videoService.currentVideo$.subscribe((currentvideo) => {
+        if (currentvideo) {
+          // this.currentVideo = video;
+          this.similarVideos = videos.filter((video: any) => {
+            if (video.id === currentvideo.id) {
+              return false; // Exclude the target video itself.
+            }
+            // Check if there are common tags between the target video and the current video.
+            const commonTags = currentvideo.tags.some((tag: string) =>
+              video.tags.includes(tag)
+            );
+            return commonTags;
+          });
+        }
+      })
+
+
+      // this.vgPlayer.nativeElement.API.requestPictureInPicture();
+      // const videoElement = document.getElementById(
+      //   'singleVideo'
+      // ) as HTMLVideoElement;
+      // videoElement.addEventListener('loadedmetadata', () => {
+      //   this.videoWidth = videoElement.videoWidth;
+      //   this.videoHeight = videoElement.videoHeight;
+      //   if (this.videoHeight > this.videoWidth) {
+      //     videoElement?.classList.add('object-contain');
+      //   } else {
+      //     videoElement?.classList.add('object-fill');
+      //   }
+      // });
+      // this.router.events
+      // .pipe(filter(event => event instanceof NavigationEnd))
+      // .subscribe(() => {
+      //   const newId = this.route.snapshot.paramMap.get('id');
+      //   if (newId) {
+      //     this.id = newId;
+      //     console.log(this.id)
+      //     this.currentVideo = videos[parseInt(newId) - 1];
+      //     this.state.activeVideo = this.currentVideo;
+      //     console.log(this.currentVideo);
+      //   }
+      // });
+      this.route.paramMap.pipe(
+        switchMap((params: ParamMap) => {
+          const id = params.get('id')!;
+          console.log("curr", this.currentVideo)
+
+          this.videoService.setCurrentVideo(this.videos[parseInt(id) - 1]); // Update the service with the new video.
+
+          return this.videoService.currentVideo$;
+        })
+      )
+      .subscribe((video) => {
+        if (video) {
+          // this.currentVideo = video
+          console.log(video);
+          if (this.singleVideo && this.singleVideo.nativeElement) {
+            this.singleVideo.nativeElement.src = video.url;
+            this.singleVideo.nativeElement.load(); // Load the new video source
+            this.updateVideoDimensions();
+          }
+
+          // this.updateVideoSource(video);
+        }
+      });
+
+      // this.route.paramMap.pipe(
+      //   switchMap((params: ParamMap) => {
+      //     const id = params.get('id')!;
+      //     console.log(id)
+      //     this.currentVideo = this.videos[parseInt(id) - 1]
+      //     console.log("curr", this.currentVideo)
+
+      //     this.videoService.setCurrentVideo(this.videos[parseInt(id) - 1]); // Update the service with the new video.
+
+      //     return of(this.currentVideo);
+      //   })
+      // )
+      // .subscribe((video) => {
+      //   if (video) {
+      //     console.log(video);
+      //   //   if (this.singleVideo && this.singleVideo.nativeElement) {
+      //   //     this.singleVideo.nativeElement.src = video.url;
+      //   //   //   this.singleVideo.nativeElement.load(); // Load the new video source
+      //   //   // }
+
+      //   //   // this.updateVideoSource(video);
+      //   // }
+      // }}
+      // );
+
+
+    }
+    else{
+      this.id = this.route.snapshot.paramMap.get('id');
+
+      this.videoService.playlists$.subscribe((data: any) => {
+        this.playlist = data[parseInt(this.id) - 1];
+        this.similarVideos = this.playlist.videos
+        if(this.playlist.videos.length === 0){
+          this.router.navigate(['']);
+          console.log("consition")
+        }
+        else if(this.playlist.videos.length === 1){
+          this.videoService.setCurrentVideo(this.playlist.videos[0])
+          this.updateVideoSource(this.playlist.videos[0])
+        }
+        else{
+          this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+          // this.updateVideoSource(this.playlist.videos[this.currentVideoIndex])
+
+        }
+        // this.currentVideo = this.playlist.videos[this.currentVideoIndex]
+
+      });
+
+    //   this.videoService.playlists$.subscribe((data: any) => {
+    //     this.playlist = data[parseInt(this.id) - 1];
+    //     this.currentVideo = this.playlist.videos[this.currentVideoIndex]
+    //     // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+
+    //   });
+
+    }
+
+
+        // Subscribe to the currentVideo$ observable and update the currentVideo property
+
+    // this.route.paramMap.subscribe((params: ParamMap) => {
+    //   this.id = params.get('id')!;
+    //   // this.currentVideo = videos[parseInt(this.id)-1];
+    //   // this.state.activeVideo = this.currentVideo;
+    //   this.videoService.setCurrentVideo(videos[parseInt(this.id)-1]); // Update the service with the new video.
+
+    //   console.log(this.currentVideo);
+    // });
+    // // this.currentVideo = this.videoService.currentVideo$;
+
+    // this.videoService.currentVideo$.subscribe((video) => {
+    //   if (video) {
+    //     console.log(video)
+    //     // this.currentVideo = video;
+    //     // this.state.activeVideo = this.currentVideo;
+    //     this.updateVideoSource(video)
+
+    //     // Update the video source dynamically
+    //     // if (this.videoElement && this.videoElement.nativeElement) {
+    //     //   this.videoElement.nativeElement.src = this.currentVideo.url;
+    //     //   this.videoElement.nativeElement.load(); // Load the new video source
+    //     // }
+    //   }
+    // });
+
+
+    // Define the target video ID for which you want to find similar videos.
+
+    // Define a function to find similar videos based on common tags.
+
+    // Call the function to find similar videos based on tags.
+  }
+
+  // onPlayerReady(api: VgApiService) {
+
+  //   this.api = api;
+  //   this.playVideo();
+  //   // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+
+  // }
+  // playVideo() {
+  //   // const currentPlaylist = this.playlists[this.currentPlaylistIndex];
+  //   this.currentVideo = this.playlist.videos[this.currentVideoIndex];
+  //   console.log("curren",this.currentVideo)
+  //   // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+  //   console.log(this.currentVideoIndex)
+
+  //   console.log(this.currentVideo)
+
+  //   if (this.currentVideo) {
+  //     // this.mediaApi.src = currentVideo.url;
+  //     // this.api.load(); // Load the new source
+  //     this.api.play();
+  //     this.updateVideoSource(this.currentVideo)
+
+  //     // Listen to the ended event to play the next video
+  //     this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {
+  //       console.log('ended');
+  //       this.playNext();
+  //     });
+  //   }
+  // }
+  // playNext() {
+  //   this.currentVideoIndex++;
+  //   // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+  //   console.log(this.currentVideoIndex);
+  //   // this.videoService.currentVideo$.subscribe((data:any)=>{
+  //   //   console.log(data)
+  //   // })
+
+  //   if (
+  //     this.currentVideoIndex >=
+  //     this.playlists[parseInt(this.id) - 1].videos.length
+  //   ) {
+  //     this.currentVideoIndex = 0;
+  //     // this.currentPlaylistIndex = ((parseInt(this.id)-1) + 1) % this.playlists.length;
+  //   }
+
+  //   this.playVideo();
+  // }
+
+  private updateVideoSource(video: any) {
+    if (this.singleVideo && this.singleVideo.nativeElement) {
+      this.singleVideo.nativeElement.src = video.url;
+      this.singleVideo.nativeElement.load(); // Load the new video source
+    }
+  }
+
+  // Add a method to update the video dimensions and class
+  updateVideoDimensions() {
+    if (this.singleVideo && this.singleVideo.nativeElement) {
+      const videoElement = this.singleVideo.nativeElement;
+      // videoElement.addEventListener('loadedmetadata', () => {
+        this.videoWidth = videoElement.videoWidth;
+        this.videoHeight = videoElement.videoHeight;
+
+        // videos like video2 needs to be displayed fully, that;'s why object-contain property is important
+        if (this.videoHeight > this.videoWidth) {
+          videoElement.classList.add('object-contain');
+        } else {
+          videoElement.classList.add('object-fill');
+        }
+      // });
+    }
+  }
+  onPlayerReady(api: VgApiService) {
+    if (this.displayPlaylist == true){
+      this.api = api;
+      this.playVideo();
+
+    }
+    else{
+      this.api=api;
+      // this.currentVideo = this.videos[parseInt(this.id)-1];
+      // this.api.play();
+    }
+
+    // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+
+  }
+
+  playVideo() {
+    // const currentPlaylist = this.playlists[this.currentPlaylistIndex];
+    this.currentVideo = this.playlist.videos[this.currentVideoIndex];
+    console.log("curren",this.currentVideo)
+    this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+
+    // console.log(this.currentVideoIndex)
+
+    this.videoService.currentVideo$.subscribe((video:any)=>{
+      if (video) {
+        console.log("current video",this.currentVideo)
+
+        // this.mediaApi.src = currentVideo.url;
+        // this.api.load(); // Load the new source
+        this.api.play();
+        this.updateVideoSource(this.currentVideo)
+        // if (this.singleVideo && this.singleVideo.nativeElement) {
+        //   this.singleVideo.nativeElement.src = video.url;
+        //   this.singleVideo.nativeElement.load(); // Load the new video source
+        // }
+
+        this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(() => {
+          console.log("deletedddd")
+        })
+
+        // Listen to the ended event to play the next video
+        this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {
+          console.log('ended');
+          this.playNext();
+        });
+      }
+
+
+
+    })
+
+    // if (this.currentVideo) {
+    //   // this.mediaApi.src = currentVideo.url;
+    //   // this.api.load(); // Load the new source
+    //   this.api.play();
+    //   // this.updateVideoSource(this.currentVideo)
+    //   if (this.singleVideo && this.singleVideo.nativeElement) {
+    //     this.singleVideo.nativeElement.src = this.currentVideo.url;
+    //     this.singleVideo.nativeElement.load(); // Load the new video source
+    //   }
+
+    //   this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(() => {
+    //     console.log("deletedddd")
+    //   })
+
+    //   // Listen to the ended event to play the next video
+    //   this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {
+    //     console.log('ended');
+    //     this.playNext();
+    //   });
+    // }
+  }
+  playNext() {
+    this.currentVideoIndex++;
+    // this.videoService.setCurrentVideo(this.playlist.videos[this.currentVideoIndex])
+    console.log("current",this.currentVideoIndex);
+    // this.videoService.currentVideo$.subscribe((data:any)=>{
+    //   console.log(data)
+    // })
+
+    if (
+      this.currentVideoIndex >=
+      this.playlists[parseInt(this.id) - 1].videos.length
+    ) {
+      this.currentVideoIndex = 0;
+      // this.currentPlaylistIndex = ((parseInt(this.id)-1) + 1) % this.playlists.length;
+    }
+
+    this.playVideo();
+  }
+
+  playSpecificVideo(id:any, index:any){
+    this.currentVideoIndex = index;
+    this.playVideo()
+
+
+  }
+
+
+}
+
+
+
+
+
+<div class="container mx-auto">
+  <div class="aspect-w-10 aspect-h-4 mx-auto my-5  rounded-lg" id="video-container" style="width: 80%;">
+    <vg-player id="vg-player" class="rounded-lg" style="width: 100% !important; height: 100% !important;"
+      (onPlayerReady)="onPlayerReady($event)">
+      <vg-overlay-play></vg-overlay-play>
+      <vg-buffering></vg-buffering>
+      <vg-scrub-bar>
+        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+      </vg-scrub-bar>
+      <vg-controls>
+        <vg-play-pause></vg-play-pause>
+        <vg-playback-button></vg-playback-button>
+        <vg-time-display vgProperty="current" vgFormat="mm:ss"> / </vg-time-display>
+        <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+        <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
+
+        <vg-track-selector></vg-track-selector>
+        <vg-mute></vg-mute>
+        <vg-volume></vg-volume>
+        <vg-fullscreen></vg-fullscreen>
+        <vg-track-selector></vg-track-selector>
+
+      </vg-controls>
+      <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin
+        (loadedmetadata)="updateVideoDimensions()">
+        <source [src]="(videoService.currentVideo$ |async).url" type="video/mp4">
+
+      </video>
+    </vg-player>
+
+  </div>
+  <div style="width: 80%;" class="mx-auto flex  justify-between xs:flex-col md:flex-row lg:flex-row 2xl:flex-row">
+    <div class="text-xl">{{(videoService.currentVideo$ |async).title}}</div>
+    <!-- <div class=" flex justify-between"> -->
+    <app-dropdown-fav-utilities [id]="(videoService.currentVideo$ |async).id"></app-dropdown-fav-utilities>
+
+    <!-- </div> -->
+  </div>
+
+
+</div>
+<!-- <div *ngIf="videoService.currentVideo$ | async as video">
+  {{video.url}}
+
+</div> -->
+<!-- <app-similar-videos [currentVideo]="videoService.currentVideo$ | async"></app-similar-videos> -->
+<!-- <app-similar-videos></app-similar-videos> -->
+<div class="bg-slate-50">
+  <div class="">
+    <p class="text-center mt-10  text-2xl p-2 border-t-2 ">You may also like</p>
+  </div>
+  <div class="my-10 xs:mx-3 pb-5 ">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mb-2 "
+      *ngFor="let item of similarVideos; let x=index">
+      <div class="flex flex-col md:flex-row lg:flex-row">
+        <div class="md:shrink-0" [routerLink]="['/video', item.id]">
+          <img class="h-48 w-full object-cover md:w-48 md:h-44 rounded-s-xl" [src]="item.thumbnail"
+            alt="Modern building architecture">
+        </div>
+        <div class="p-10 rounded-r-xl bg-white">
+          <div *ngIf="displayPlaylist == true; else route">
+            <p *ngIf="(videoService.currentVideo$ |async) === item" class="text-2xl text-rose-500">Now Playing...</p>
+            <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate"
+              (click)="currentVideoIndex = x; playVideo()">{{item.title}}</p>
+
+          </div>
+          <ng-template #route>
+            <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate"
+              [routerLink]="['/video', item.id]">{{item.title}}</p>
+          </ng-template>
+
+          <!-- <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{item.title}}</div> -->
+          <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>
+
+          <!-- <p class="mt-2 text-slate-500">Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of places to do just that.</p> -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
