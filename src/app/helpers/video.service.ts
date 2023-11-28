@@ -1,5 +1,6 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { playlists } from './videos';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,26 @@ export class VideoService {
   //   const playlists = this.playlistsSubject.value;
   //   return playlists.some(playlist => playlist.videos.some((v:any) => v.id === video.id));
   // }
+  addToPlaylist(playlistId: number, selectedVideo:any) {
+    // const playlists = this.playlistsSubject.value;
+    console.log(this.playlistsSubject.value)
+    const selectedPlaylist = playlists.find((playlist) => playlist.id === playlistId);
+    console.log(selectedPlaylist)
+    if ( selectedVideo && selectedPlaylist) {
+      // Add the selected video to the playlist
+      selectedPlaylist.videos.push(selectedVideo);
+      window.alert(`Added "${selectedVideo.title}" to "${selectedPlaylist.name}" playlist.`)
+      const updatedPlaylists = playlists.filter((playlist) => {
+        if (playlist.id === selectedPlaylist.id) {
+          return selectedPlaylist; // Update the selected playlist
+        }
+        return playlist;
+      });
+     this.updatePlaylists(updatedPlaylists)
+    }else{
+      window.alert("nothing")
+    }
+  }
 
 
   removeVideoFromPlaylist(videoId: any): void {

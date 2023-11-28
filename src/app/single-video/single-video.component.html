@@ -1,6 +1,7 @@
 <div class="container mx-auto">
   <div class="aspect-w-10 aspect-h-4 mx-auto my-5  rounded-lg" id="video-container" style="width: 80%;">
-    <vg-player id="vg-player" class="rounded-lg" style="width: 100% !important; height: 100% !important;" (onPlayerReady)="onPlayerReady($event)">
+    <vg-player id="vg-player" class="rounded-lg" style="width: 100% !important; height: 100% !important;"
+      (onPlayerReady)="onPlayerReady($event)">
       <vg-overlay-play></vg-overlay-play>
       <vg-buffering></vg-buffering>
       <vg-scrub-bar>
@@ -23,7 +24,8 @@
         <vg-track-selector></vg-track-selector>
 
       </vg-controls>
-      <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin (loadedmetadata)="videoService.updateVideoDimensions(singleVideo)">
+      <video [vgMedia]="$any(media)" #media id="singleVideo" preload="auto" crossorigin
+        (loadedmetadata)="videoService.updateVideoDimensions(singleVideo)">
         <!-- <source [src]="currentVideo.url" type="video/mp4"> -->
         <!-- <source src="assets/video2.mp4" type="video/mp4"> -->
         <source [src]="(videoService.currentVideo$ | async).url" type="video/mp4">
@@ -35,7 +37,7 @@
   <div style="width: 80%;" class="mx-auto flex  justify-between xs:flex-col md:flex-row lg:flex-row 2xl:flex-row">
     <div class="text-xl">{{(videoService.currentVideo$ | async).title}}</div>
     <!-- <div class=" flex justify-between"> -->
-      <app-dropdown-fav-utilities [id]="(videoService.currentVideo$ | async).id"></app-dropdown-fav-utilities>
+    <app-dropdown-fav-utilities [id]="(videoService.currentVideo$ | async).id"></app-dropdown-fav-utilities>
 
     <!-- </div> -->
   </div>
@@ -50,19 +52,29 @@
 <!-- <app-similar-videos></app-similar-videos> -->
 <div class="bg-slate-50">
   <div class="">
-    <p class="text-center mt-10  text-2xl p-2 border-t-2 ">You may also like</p>
+    <p class="text-center mt-10 text-4xl p-2 border-t-2 " *ngIf="displayPlaylist == false; else text">You may also like
+    </p>
+    <ng-template #text>
+      <p class="text-center mt-10 text-4xl p-2 border-t-2 ">Next in line</p>
+
+    </ng-template>
   </div>
-  <div class="my-10 xs:mx-3 pb-5 " >
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mb-2 "  *ngFor="let item of similarVideos; let x=index">
+  <div class="my-10 xs:mx-3 pb-5 ">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mb-2 "
+      *ngFor="let item of similarVideos; let x=index">
       <div class="flex flex-col md:flex-row lg:flex-row">
         <div class="md:shrink-0" [routerLink]="['/video', item.id]">
-          <img class="h-48 w-full object-cover md:w-48 md:h-44 rounded-s-xl" [src]="item.thumbnail" alt="Modern building architecture">
+          <img class="h-48 w-full object-cover md:w-48 md:h-44 rounded-s-xl" [src]="item.thumbnail"
+            alt="Modern building architecture">
         </div>
         <div class="p-10 rounded-r-xl bg-white">
-          <div *ngIf="displayPlaylist == true"><p *ngIf="currentVideo === item" class="text-2xl text-rose-500" >Now Playing...</p></div>
+          <div *ngIf="displayPlaylist == true">
+            <p *ngIf="currentVideo === item" class="text-2xl text-rose-500">Now Playing...</p>
+          </div>
 
           <!-- <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{item.title}}</div> -->
-          <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate" [routerLink]="['/video', item.id]"  >{{item.title}}</p>
+          <p class="block mt-1 w-96 text-lg leading-tight font-medium text-black cursor-pointer truncate"
+            [routerLink]="['/video', item.id]">{{item.title}}</p>
           <app-dropdown-fav-utilities [id]="item.id"></app-dropdown-fav-utilities>
 
           <!-- <p class="mt-2 text-slate-500">Looking to take your team away on a retreat to enjoy awesome food and take in some sunshine? We have a list of places to do just that.</p> -->
@@ -71,6 +83,4 @@
     </div>
 
   </div>
-  </div>
-
-
+</div>

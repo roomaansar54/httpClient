@@ -20,38 +20,39 @@ export class DropdownFavUtilitiesComponent {
   }
   addToPlaylist(playlistId: number, event:any) {
     event.preventDefault();
+    this.videoService.addToPlaylist(playlistId, videos[this.id-1] )
     // Find the selected playlist
-    const selectedPlaylist = playlists.find((playlist) => playlist.id === playlistId);
-    this.selectedVideo = videos[this.id - 1]
+    // const selectedPlaylist = playlists.find((playlist) => playlist.id === playlistId);
+    // this.selectedVideo = videos[this.id - 1]
 
-    if ( this.selectedVideo && selectedPlaylist) {
-      // Add the selected video to the playlist
-      selectedPlaylist.videos.push(this.selectedVideo);
-      window.alert(`Added "${this.selectedVideo.title}" to "${selectedPlaylist.name}" playlist.`)
-      this.isMenuOpen == false
-      const updatedPlaylists = playlists.filter((playlist) => {
-        if (playlist.id === selectedPlaylist.id) {
-          return selectedPlaylist; // Update the selected playlist
-        }
-        return playlist;
-      });
-      // const updatedPlaylists = playlists.map((playlist) => {
-      //   if (playlist.id === selectedPlaylist.id) {
-      //     return selectedPlaylist; // Update the selected playlist
-      //   }
-      //   return playlist;
-      // });
+    // if ( this.selectedVideo && selectedPlaylist) {
+    //   // Add the selected video to the playlist
+    //   selectedPlaylist.videos.push(this.selectedVideo);
+    //   window.alert(`Added "${this.selectedVideo.title}" to "${selectedPlaylist.name}" playlist.`)
+    //   this.isMenuOpen == false
+    //   const updatedPlaylists = playlists.filter((playlist) => {
+    //     if (playlist.id === selectedPlaylist.id) {
+    //       return selectedPlaylist; // Update the selected playlist
+    //     }
+    //     return playlist;
+    //   });
+    //   // const updatedPlaylists = playlists.map((playlist) => {
+    //   //   if (playlist.id === selectedPlaylist.id) {
+    //   //     return selectedPlaylist; // Update the selected playlist
+    //   //   }
+    //   //   return playlist;
+    //   // });
 
-     this.videoService.updatePlaylists(updatedPlaylists)
+    //  this.videoService.updatePlaylists(updatedPlaylists)
+
+    // }
+  }
+    handleFavorites(addOrRemoveCheck:boolean){
+      const isFavorite = addOrRemoveCheck === true ? true : false;
+      videos[this.id-1].isFavorite = isFavorite;
+      this.videoService.updateFavVideos(videos.filter((video) => video.isFavorite === true));
 
     }
-  }
-  handleFavorites(addOrRemoveCheck:boolean){
-    const isFavorite = addOrRemoveCheck === true ? true : false;
-    videos[this.id-1].isFavorite = isFavorite;
-    this.videoService.updateFavVideos(videos.filter((video) => video.isFavorite === true));
-
-  }
   isInPlaylist(videoId: number): { isIn: boolean, playlistName?: string } {
     return this.videoService.isInAnyPlaylist(videoId);
   }
